@@ -6,6 +6,7 @@
     <string name="bluetooth">Bluetooth</string>
     <string name="BLUETOOTH_NOT_AVIABLE">El bluetooth no está activado</string>
     <string name="BLUETOOTH_ALREADY_ENABLE">El bluetooth ya esta activado</string>
+    <string name="BLUETOOTH_NOT_ENABLE">No se activará el Bluetooth</string>
     <string name="title_activity_dispositivos_listados">DispositivosListados</string>
     <string name="select_conn_type">Seleccionar tipo de Conexion</string>
     <!-- listando dispositivos -->

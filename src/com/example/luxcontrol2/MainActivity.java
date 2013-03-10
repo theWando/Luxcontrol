@@ -76,11 +76,27 @@ public class MainActivity extends Activity implements OnClickListener  {
         } else {
         	Toast.makeText(getApplicationContext(), R.string.BLUETOOTH_ALREADY_ENABLE, Toast.LENGTH_LONG).show();
         }
-        while(true){
-        	if(mBluetoothAdapter.isEnabled()){
-        		break;
-        	}
-        }
-        cargarDispositivos();
+       
 	}
+
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_ENABLE_BT) {
+			//se pregunta si se desea activar el bluetooth
+			if (resultCode == RESULT_OK) {
+				while(true){
+					if(mBluetoothAdapter.isEnabled()){
+						break;
+					}
+				}
+				cargarDispositivos();
+			} else {
+				Toast.makeText(getApplicationContext(), R.string.BLUETOOTH_NOT_ENABLE, Toast.LENGTH_LONG).show();
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	
 }
