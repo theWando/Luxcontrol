@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Luxcontrol</string>
+    <string name="action_settings">Settings</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="BLUETOOTH_NOT_AVIABLE">El bluetooth no está activado</string>
+    <string name="BLUETOOTH_ALREADY_ENABLE">El bluetooth ya esta activado</string>
+    <string name="title_activity_dispositivos_listados">DispositivosListados</string>
+    <string name="select_conn_type">Seleccionar tipo de Conexion</string>
+    <!-- listando dispositivos -->
+    <string name="scanning">Escaneando dispositivos</string>
+    <string name="select_device">Selecciona un dispositivo para conectar</string>
+    <string name="none_paired">No existen dispositivos apareados</string>
+    <string name="none_found">No se han encontrado dispositivos</string>
+    <string name="title_paired_devices">Dispositivos pareados</string>
+    <string name="title_other_devices">Otros dispositivos disponibles</string>
+    <string name="button_scan">Buscar dispositivos</string>
+
+</resources>
