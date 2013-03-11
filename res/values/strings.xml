@@ -9,6 +9,11 @@
     <string name="BLUETOOTH_NOT_ENABLE">No se activará el Bluetooth</string>
     <string name="title_activity_dispositivos_listados">DispositivosListados</string>
     <string name="select_conn_type">Seleccionar tipo de Conexion</string>
+    <string name="ON">ON</string>
+    <string name="OFF">OFF</string>
+	<string name="title_connecting">connecting...</string>
+    <string name="title_connected_to">connected to device</string>
+    <string name="title_not_connected">not connected</string>
     <!-- listando dispositivos -->
     <string name="scanning">Escaneando dispositivos</string>
     <string name="select_device">Selecciona un dispositivo para conectar</string>
@@ -17,5 +22,7 @@
     <string name="title_paired_devices">Dispositivos pareados</string>
     <string name="title_other_devices">Otros dispositivos disponibles</string>
     <string name="button_scan">Buscar dispositivos</string>
+    <string name="title_activity_lista_bombillos">Lista Bombillos</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

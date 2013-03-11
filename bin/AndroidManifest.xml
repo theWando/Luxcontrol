@@ -29,6 +29,13 @@
             android:name="com.example.luxcontrol2.DispositivosListados"
             android:label="@string/title_activity_dispositivos_listados" >
         </activity>
+        <activity
+            android:name="com.example.luxcontrol2.ListaBombillos"
+            android:label="@string/title_activity_lista_bombillos" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.luxcontrol2.DispositivosListados" />
+        </activity>
     </application>
 
 </manifest>

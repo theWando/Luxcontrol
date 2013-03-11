@@ -160,8 +160,9 @@ public class DispositivosListados extends Activity {
             String address = info.substring(info.length() - 17);
 
             // Create the result Intent and include the MAC address
-            Intent intent = new Intent();
+            Intent intent = new Intent(getApplicationContext(), ListaBombillos.class);
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+            startActivity(intent);
 
             // Set result and finish this Activity
             setResult(Activity.RESULT_OK, intent);
