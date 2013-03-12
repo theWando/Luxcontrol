@@ -18,7 +18,6 @@ public class MainActivity extends BluetoothService  {
         setContentView(R.layout.activity_main);
         bluetoothBttn = (Button) findViewById(R.id.main_blue);
         bluetoothBttn.setOnClickListener(this);
-        
 		if(this.isOn()){
 			cargarDispositivos();
 		}
