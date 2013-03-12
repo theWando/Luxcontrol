@@ -1,7 +1,5 @@
 package com.example.luxcontrol2;
 
-import java.util.Set;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -18,9 +16,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.luxcontrol2.bluetooth.BluetoothService;
+import com.example.luxcontrol2.bluetooth.BluetoothListService;
 
-public class DispositivosListados extends BluetoothService {
+public class DispositivosListados extends BluetoothListService {
     // Debugging
     private static final String TAG = "DeviceListActivity";
     private static final boolean D = true;
@@ -41,6 +39,7 @@ public class DispositivosListados extends BluetoothService {
 		regresarAMain();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,18 +83,7 @@ public class DispositivosListados extends BluetoothService {
 
 
         // Get a set of currently paired devices
-        Set<BluetoothDevice> pairedDevices = findPairedDevices();
-
-        // If there are paired devices, add each one to the ArrayAdapter
-        if (pairedDevices.size() > 0) {
-            findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
-            for (BluetoothDevice device : pairedDevices) {
-                mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-            }
-        } else {
-            String noDevices = getResources().getText(R.string.none_paired).toString();
-            mPairedDevicesArrayAdapter.add(noDevices);
-        }
+        mPairedDevicesArrayAdapter = (ArrayAdapter<String>) getPairedDevicesAdapter(R.id.title_paired_devices);
     }
 
 	private void regresarAMain() {
@@ -159,6 +147,16 @@ public class DispositivosListados extends BluetoothService {
 			doDiscovery();
 			v.setVisibility(View.GONE);
 		}
+	}
+
+	@Override
+	protected void addNewFoundDevice(BluetoothDevice device) {
+		mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+	}
+
+	@Override
+	protected void addPairedDevice(BluetoothDevice device) {
+		mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
 	}
 
 }
