@@ -151,7 +151,18 @@ public class DispositivosListados extends BluetoothListService {
 
 	@Override
 	protected void addNewFoundDevice(BluetoothDevice device) {
-		mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+		boolean found = false;
+		String deviceStr = device.getName() + "\n" + device.getAddress();
+		for(int i = 0; i < mNewDevicesArrayAdapter.getCount(); i++) {
+			String item = mNewDevicesArrayAdapter.getItem(i);
+			if(item.contains(device.getAddress())) {
+				found = true;
+				mNewDevicesArrayAdapter.insert(deviceStr, i);
+			}
+		}
+		if (!found) {
+			mNewDevicesArrayAdapter.add(deviceStr);
+		}
 	}
 
 	@Override
