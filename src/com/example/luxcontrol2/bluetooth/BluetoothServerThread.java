@@ -3,24 +3,22 @@ package com.example.luxcontrol2.bluetooth;
 import java.io.IOException;
 import java.util.UUID;
 
-import com.example.luxcontrol2.bluetooth.exception.BluetoothException;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
 
-public class BluetoothThread extends Thread {
+public class BluetoothServerThread extends Thread {
 	
 	private final BluetoothServerSocket btServerSocket;
 
-	public BluetoothThread(BluetoothAdapter btAdapter) throws BluetoothException {
+	public BluetoothServerThread(BluetoothAdapter btAdapter, final UUID uuid) {
 		super();
 		BluetoothServerSocket btServerSocket = null;
 		try {
-			UUID uuid = UUID.randomUUID();
 			btServerSocket = btAdapter.listenUsingRfcommWithServiceRecord("blablilu", uuid);
 		} catch (IOException e) {
-			throw new BluetoothException(e.fillInStackTrace());
+			Log.e(this.getClass().getSimpleName(), "Error conectando", e);
 		}
 		this.btServerSocket = btServerSocket;
 	}
@@ -33,6 +31,7 @@ public class BluetoothThread extends Thread {
             try {
                 socket = btServerSocket.accept();
             } catch (IOException e) {
+            	Log.e(this.getClass().getSimpleName(), "Error buscando dispositivos en el ServerSocket", e);
                 break;
             }
             // If a connection was accepted
@@ -42,8 +41,7 @@ public class BluetoothThread extends Thread {
 				try {
 					btServerSocket.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Log.e(this.getClass().getSimpleName(), "Error cerrando la conexión", e);
 				}
                 break;
             }

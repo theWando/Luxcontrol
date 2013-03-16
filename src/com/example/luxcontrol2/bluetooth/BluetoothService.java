@@ -1,19 +1,51 @@
 package com.example.luxcontrol2.bluetooth;
 
+import java.util.UUID;
+
+import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Toast;
 
+import com.example.luxcontrol2.DispositivosListados;
 import com.example.luxcontrol2.R;
 
 public abstract class BluetoothService extends Activity implements OnClickListener {
 	//CONSTANTS
 	public static final int REQUEST_ENABLE_BT = 3;
-	
-	//ATRIBUTES
+	protected static final UUID uuid = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
+	public static final String TOAST = "toast";
+    public static final String DEVICE_NAME = "device_name";
+   
+	// Message types sent from the BluetoothChatService Handler
+    public static final int MESSAGE_STATE_CHANGE = 1;
+    public static final int MESSAGE_READ = 2;
+    public static final int MESSAGE_WRITE = 3;
+    public static final int MESSAGE_DEVICE_NAME = 4;
+    public static final int MESSAGE_TOAST = 5;
+
+    // Constants that indicate the current connection state
+    public static final int STATE_NONE = 0;       // we're doing nothing
+    public static final int STATE_LISTEN = 1;     // now listening for incoming connections
+    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
+    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+
+    //ATRIBUTES
 	private BluetoothAdapter btAdapter;
+	private BluetoothServerThread serverThread;
+	private BluetoothClientThread clientThread;
+	private int state;
+	private String deviceAddress;
+	private String mConnectedDeviceName = null;
+
 	
 	public BluetoothService() {
 		btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -28,6 +60,21 @@ public abstract class BluetoothService extends Activity implements OnClickListen
 			return true;
 		}
 		return false;
+	}
+
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			deviceAddress = extras.getString(DispositivosListados.EXTRA_DEVICE_ADDRESS);
+			if(deviceAddress != null) {
+				BluetoothDevice device = getAdapter().getRemoteDevice(deviceAddress);
+				connect(device);
+			}
+		}
 	}
 
 	/**
@@ -52,7 +99,7 @@ public abstract class BluetoothService extends Activity implements OnClickListen
 	}
 
 	/**
-	 * Muestra un mensaje en pantalla a través de un Toast.
+	 * Muestra un mensaje en pantalla a travï¿½s de un Toast.
 	 * @param bluetoothNotEnable Referencia a los string en el strings.xml
 	 */
 	protected void callToast(int bluetoothNotEnable) {
@@ -60,7 +107,7 @@ public abstract class BluetoothService extends Activity implements OnClickListen
 	}
 	
 	/**
-	 * Muestra un mensaje en pantalla a través de un Toast
+	 * Muestra un mensaje en pantalla a travï¿½s de un Toast
 	 * @param msg
 	 */
 	protected void callToast(String msg) {
@@ -85,15 +132,139 @@ public abstract class BluetoothService extends Activity implements OnClickListen
 		}
 	}
 	/**
-	 * Envía un mensaje al dispositivo con el que está conectado
+	 * Envï¿½a un mensaje al dispositivo con el que estï¿½ conectado
 	 * @param msg
 	 */
 	public void sendMessage(String msg) {
 		
 	}
 
-	
+    /**
+     * Set the current state of the chat connection
+     * @param state  An integer defining the current connection state
+     */
+    private synchronized void setState(int state) {
+        this.state = state;
+
+        // Give the new state to the Handler so the UI Activity can update
+        mHandler.obtainMessage(MESSAGE_STATE_CHANGE, state, -1).sendToTarget();
+    }
+    
+
+    private final void setStatus(int resId) {
+        final ActionBar actionBar = getActionBar();
+        actionBar.setSubtitle(resId);
+    }
+
+    private final void setStatus(CharSequence subTitle) {
+        final ActionBar actionBar = getActionBar();
+        actionBar.setSubtitle(subTitle);
+    }
+
+    // The Handler that gets information back from the BluetoothChatService
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MESSAGE_STATE_CHANGE:
+                switch (msg.arg1) {
+                case STATE_CONNECTED:
+                    setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                    break;
+                case STATE_CONNECTING:
+                    setStatus(R.string.title_connecting);
+                    break;
+                case STATE_LISTEN:
+                case STATE_NONE:
+                    setStatus(R.string.title_not_connected);
+                    break;
+                }
+                break;
+            case MESSAGE_WRITE:
+                byte[] writeBuf = (byte[]) msg.obj;
+                // construct a string from the buffer
+                String writeMessage = new String(writeBuf);
+                break;
+            case MESSAGE_READ:
+                byte[] readBuf = (byte[]) msg.obj;
+                // construct a string from the valid bytes in the buffer
+                String readMessage = new String(readBuf, 0, msg.arg1);
+                break;
+            case MESSAGE_DEVICE_NAME:
+                // save the connected device's name
+                Toast.makeText(getApplicationContext(), "Connected to " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                break;
+            case MESSAGE_TOAST:
+            	callToast(msg.getData().getString(TOAST));
+                break;
+            }
+        }
+    };
+    
+    /**
+     * Return the current connection state. */
+    public synchronized int getState() {
+        return this.state;
+    }
+
 	protected BluetoothAdapter getAdapter() {
 		return btAdapter;
 	}
+	
+    public synchronized void connect(BluetoothDevice device) {
+        // Cancel any thread attempting to make a connection
+        if (state == STATE_CONNECTING) {
+            if (clientThread != null) {clientThread.cancel(); clientThread = null;}
+        }
+
+        // Cancel any thread currently running a connection
+//        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
+
+        if (state != STATE_CONNECTING) {
+			// Start the thread to connect with the given device
+			clientThread = new BluetoothClientThread(this, device,
+					getAdapter(), uuid); //ConnectThread(device, secure);
+			clientThread.start();
+			setState(STATE_CONNECTING);
+		}
+    }
+    
+    /**
+     * Start the ConnectedThread to begin managing a Bluetooth connection
+     * @param socket  The BluetoothSocket on which the connection was made
+     * @param device  The BluetoothDevice that has been connected
+     */
+    public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
+
+        // Cancel the thread that completed the connection
+        if (clientThread != null) {clientThread.cancel(); clientThread = null;}
+
+        // Cancel any thread currently running a connection
+//        if (mConnectedThread != null) {mConnectedThread.cancel(); mConnectedThread = null;}
+
+        // Cancel the accept thread because we only want to connect to one device
+//        if (mSecureAcceptThread != null) {
+//            mSecureAcceptThread.cancel();
+//            mSecureAcceptThread = null;
+//        }
+//        if (mInsecureAcceptThread != null) {
+//            mInsecureAcceptThread.cancel();
+//            mInsecureAcceptThread = null;
+//        }
+//
+//        // Start the thread to manage the connection and perform transmissions
+//        mConnectedThread = new ConnectedThread(socket, socketType);
+//        mConnectedThread.start();
+
+        // Send the name of the connected device back to the UI Activity
+        Message msg = mHandler.obtainMessage(MESSAGE_DEVICE_NAME);
+        Bundle bundle = new Bundle();
+        bundle.putString(DEVICE_NAME, device.getName());
+        msg.setData(bundle);
+        mHandler.sendMessage(msg);
+        setState(STATE_CONNECTED);
+    }
+
+
+
 }
