@@ -5,7 +5,6 @@ package com.example.luxcontrol2.bluetooth;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

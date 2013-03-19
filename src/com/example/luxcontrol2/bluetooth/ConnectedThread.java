@@ -13,13 +13,15 @@ public class ConnectedThread extends Thread {
     private final Handler mHandler;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
+    private BluetoothService service;
     
     private final static int MESSAGE_READ = 2;
  
-    public ConnectedThread(BluetoothSocket socket, Handler mHandler) {
+    public ConnectedThread(BluetoothSocket socket, BluetoothService service, Handler mHandler) {
         mmSocket = socket;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
+        this.service = service;
  
         // Get the input and output streams, using temp objects because
         // member streams are final
@@ -48,6 +50,9 @@ public class ConnectedThread extends Thread {
                 // Send the obtained bytes to the UI activity
                 mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
             } catch (IOException e) {
+            	Log.e(this.getClass().getSimpleName(), "desconectado", e);
+				service.connectionLost();
+            	Log.e(this.getClass().getSimpleName(), "Error leyendo el mensaje", e);
                 break;
             }
         }
@@ -57,13 +62,17 @@ public class ConnectedThread extends Thread {
     public void write(byte[] bytes) {
         try {
             mmOutStream.write(bytes);
-        } catch (IOException e) { }
+        } catch (IOException e) {
+        	Log.e(this.getClass().getSimpleName(), "Error escribiendo", e);
+        }
     }
  
     /* Call this from the main activity to shutdown the connection */
     public void cancel() {
         try {
             mmSocket.close();
-        } catch (IOException e) { }
+        } catch (IOException e) {
+        	Log.e(this.getClass().getSimpleName(), "Error Cancelando", e);
+        }
     }
 }

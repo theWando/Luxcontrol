@@ -16,7 +16,7 @@ public class BluetoothServerThread extends Thread {
 		super();
 		BluetoothServerSocket btServerSocket = null;
 		try {
-			btServerSocket = btAdapter.listenUsingRfcommWithServiceRecord("blablilu", uuid);
+			btServerSocket = btAdapter.listenUsingRfcommWithServiceRecord("BluetoothChatSecure", uuid);
 		} catch (IOException e) {
 			Log.e(this.getClass().getSimpleName(), "Error conectando", e);
 		}
