@@ -1,4 +1,4 @@
-package com.example.luxcontrol2;
+package com.eduardolaguna.luxcontrol;
 
 import android.annotation.TargetApi;
 import android.os.Build;
@@ -6,7 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ToggleButton;
 
-import com.example.luxcontrol2.bluetooth.BluetoothService;
+import com.eduardolaguna.luxcontrol.bluetooth.BluetoothService;
+import com.example.luxcontrol2.R;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class ListaBombillos extends BluetoothService {

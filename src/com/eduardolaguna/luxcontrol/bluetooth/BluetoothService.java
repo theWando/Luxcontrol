@@ -1,4 +1,4 @@
-package com.example.luxcontrol2.bluetooth;
+package com.eduardolaguna.luxcontrol.bluetooth;
 
 import java.util.UUID;
 
@@ -16,7 +16,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Toast;
 
-import com.example.luxcontrol2.DispositivosListados;
+import com.eduardolaguna.luxcontrol.DispositivosListados;
 import com.example.luxcontrol2.R;
 
 public abstract class BluetoothService extends Activity implements
@@ -299,8 +299,7 @@ public abstract class BluetoothService extends Activity implements
 	 * @param device
 	 *            The BluetoothDevice that has been connected
 	 */
-	public synchronized void connected(BluetoothSocket socket,
-			BluetoothDevice device) {
+	public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
 
 		// Cancel the thread that completed the connection
 		if (clientThread != null) {

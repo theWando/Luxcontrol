@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.example.luxcontrol2.bluetooth;
+package com.eduardolaguna.luxcontrol.bluetooth;
 
 import java.util.HashSet;
 import java.util.Set;

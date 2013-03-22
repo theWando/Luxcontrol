@@ -1,4 +1,4 @@
-package com.example.luxcontrol2;
+package com.eduardolaguna.luxcontrol;
 
 public class Bombillo {
 

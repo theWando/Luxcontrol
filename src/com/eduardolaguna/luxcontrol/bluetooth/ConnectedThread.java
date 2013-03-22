@@ -1,4 +1,4 @@
-package com.example.luxcontrol2.bluetooth;
+package com.eduardolaguna.luxcontrol.bluetooth;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,10 +45,10 @@ public class ConnectedThread extends Thread {
         // Keep listening to the InputStream until an exception occurs
         while (true) {
             try {
-                // Read from the InputStream
-                bytes = mmInStream.read(buffer);
-                // Send the obtained bytes to the UI activity
-                mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+				// Read from the InputStream
+				bytes = mmInStream.read(buffer);
+				// Send the obtained bytes to the UI activity
+				mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
             } catch (IOException e) {
             	Log.e(this.getClass().getSimpleName(), "desconectado", e);
 				service.connectionLost();

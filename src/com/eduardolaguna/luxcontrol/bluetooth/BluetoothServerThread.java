@@ -1,4 +1,4 @@
-package com.example.luxcontrol2.bluetooth;
+package com.eduardolaguna.luxcontrol.bluetooth;
 
 import java.io.IOException;
 import java.util.UUID;

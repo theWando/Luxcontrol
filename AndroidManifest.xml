@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.luxcontrol2.MainActivity"
+            android:name="com.eduardolaguna.luxcontrol.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,11 +26,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.luxcontrol2.DispositivosListados"
+            android:name="com.eduardolaguna.luxcontrol.DispositivosListados"
             android:label="@string/title_activity_dispositivos_listados" >
         </activity>
         <activity
-            android:name="com.example.luxcontrol2.ListaBombillos"
+            android:name="com.eduardolaguna.luxcontrol.ListaBombillos"
             android:label="@string/title_activity_lista_bombillos" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -1,4 +1,4 @@
-package com.example.luxcontrol2;
+package com.eduardolaguna.luxcontrol;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -16,7 +16,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.luxcontrol2.bluetooth.BluetoothListService;
+import com.eduardolaguna.luxcontrol.bluetooth.BluetoothListService;
+import com.example.luxcontrol2.R;
 
 public class DispositivosListados extends BluetoothListService {
     // Debugging
